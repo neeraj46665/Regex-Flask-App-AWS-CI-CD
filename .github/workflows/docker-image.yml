@@ -15,8 +15,8 @@ jobs:
 
       - name: Log in to Docker Hub
         env:
-          DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
-          DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
+          DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}  # Ensure this secret is set
+          DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}        # Ensure this secret is set
         run: echo "${DOCKER_HUB_TOKEN}" | docker login -u "${DOCKER_HUB_USERNAME}" --password-stdin
 
       - name: Build Docker image
@@ -25,34 +25,24 @@ jobs:
       - name: Push Docker image
         run: docker push neeraj46665/regex-app:latest
 
-      - name: Deploy to your EC2 instance
+      - name: Deploy to EC2
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}  # SSH private key from secrets
-          EC2_USER: ec2-user  # Change if your EC2 user is different
-          EC2_HOST: ec2-13-53-39-239.eu-north-1.compute.amazonaws.com  # Your EC2 instance address
-          IMAGE_NAME: neeraj46665/regex-app:latest  # Docker image name
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}  # Ensure this secret is set
         run: |
           echo "${SSH_PRIVATE_KEY}" > key.pem
           chmod 600 key.pem
-          
-          # Ensure the .ssh directory exists
-          mkdir -p ~/.ssh
-          # Add the EC2 host to known_hosts
-          ssh-keyscan -H $EC2_HOST >> ~/.ssh/known_hosts
-          
-          ssh -i key.pem $EC2_USER@$EC2_HOST << 'EOF'
-            newgrp docker << 'END'
-              # Pull the Docker image
-              docker pull $IMAGE_NAME
-              
-              # Check if the container exists, then stop and remove it
-              if [ $(docker ps -a -q -f name=regex-app) ]; then
-                  docker stop regex-app
-                  docker rm regex-app
-              fi
 
-              # Run the new container
-              docker run -d --name regex-app -p 5000:5000 $IMAGE_NAME
-            END
+          # SSH into the EC2 instance
+          ssh -o StrictHostKeyChecking=no -i key.pem ec2-user@ec2-13-53-39-239.eu-north-1.compute.amazonaws.com << 'EOF'
+            # Pull the Docker image
+            docker pull neeraj46665/regex-app:latest
+
+            # Stop and remove the existing container if it exists
+            docker stop regex-app || true
+            docker rm regex-app || true
+
+            # Run the new container
+            docker run -d --name regex-app -p 5000:5000 neeraj46665/regex-app:latest
           EOF
+          
           rm key.pem  # Clean up the key file

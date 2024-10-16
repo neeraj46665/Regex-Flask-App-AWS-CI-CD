@@ -33,7 +33,7 @@ jobs:
           chmod 600 key.pem
 
           # SSH into the EC2 instance
-          ssh -o StrictHostKeyChecking=no -i key.pem ec2-user@ec2-13-53-39-239.eu-north-1.compute.amazonaws.com << 'EOF'
+          ssh -o StrictHostKeyChecking=no -i key.pem ec2-user@ec2-16-171-10-151.eu-north-1.compute.amazonaws.com << 'EOF'
             # Pull the Docker image
             docker pull neeraj46665/regex-app:latest
 

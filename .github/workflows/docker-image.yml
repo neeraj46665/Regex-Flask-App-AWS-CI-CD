@@ -37,12 +37,16 @@ jobs:
             # Pull the Docker image
             docker pull neeraj46665/regex-app:latest
 
-            # Stop and remove the existing container if it exists
-            docker stop regex-app || true
-            docker rm regex-app || true
+            # Check if the container exists
+            if [ "$(docker ps -aq -f name=regex-app)" ]; then
+              # Stop and remove the existing container if it exists
+              docker stop regex-app
+              docker rm regex-app
+            fi
 
             # Run the new container
             docker run -d --name regex-app -p 5000:5000 neeraj46665/regex-app:latest
           EOF
           
           rm key.pem  # Clean up the key file
+

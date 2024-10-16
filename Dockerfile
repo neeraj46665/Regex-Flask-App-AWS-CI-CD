@@ -16,5 +16,8 @@ COPY . .
 # Expose the port the app runs on
 EXPOSE 5000
 
+# Ensure Flask listens on all available interfaces, not just localhost
+ENV FLASK_RUN_HOST=0.0.0.0
+
 # Command to run the application
 CMD ["python", "app.py"]

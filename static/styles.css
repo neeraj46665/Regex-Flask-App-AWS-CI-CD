@@ -1,0 +1,129 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(to right, #2c3e50, #3498db);
+    color: #ecf0f1;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 600px;
+    margin: auto;
+    background-color: rgba(44, 62, 80, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+h1,
+h2,
+h3 {
+    text-align: center;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+label {
+    margin-bottom: 5px;
+}
+
+input[type="text"],
+input[type="email"],
+textarea {
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #2980b9;
+    border-radius: 5px;
+    background-color: #ecf0f1;
+    color: #2c3e50;
+    font-size: 16px;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+textarea:focus {
+    outline: none;
+    border-color: #3498db;
+    background-color: #ffffff;
+}
+
+button {
+    padding: 10px;
+    background-color: #2980b9;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #3498db;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    background: #3498db;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+}
+
+.validation-result {
+    margin-top: 20px;
+    padding: 15px;
+    /* Increased padding for better spacing */
+    border-radius: 8px;
+    /* More rounded corners */
+    display: flex;
+    /* Using flex for alignment */
+    align-items: center;
+    /* Centering the items */
+    justify-content: center;
+    /* Centering the items */
+    font-size: 18px;
+    /* Larger font size */
+    transition: all 0.3s ease;
+    /* Smooth transition for effects */
+}
+
+.validation-result.valid {
+    background-color: #27ae60;
+    /* Green background for valid */
+    color: white;
+    /* White text for contrast */
+    border: 2px solid #1e6f4c;
+    /* Darker green border */
+}
+
+.validation-result.invalid {
+    background-color: #e74c3c;
+    /* Red background for invalid */
+    color: white;
+    /* White text for contrast */
+    border: 2px solid #c0392b;
+    /* Darker red border */
+}
+
+.validation-result h3 {
+    margin: 0;
+    /* Remove default margin */
+    font-weight: bold;
+    /* Bold heading */
+}
+
+.validation-result p {
+    margin: 0;
+    /* Remove default margin */
+    padding-left: 10px;
+    /* Spacing between heading and paragraph */
+}

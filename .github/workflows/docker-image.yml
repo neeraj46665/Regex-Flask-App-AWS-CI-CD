@@ -1,0 +1,48 @@
+name: Docker CI/CD
+
+on:
+  push:
+    branches:
+      - main  # Change this to your default branch if it's not 'main'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}  # Ensure this secret is set
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}  # Ensure this secret is set
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: Dockerfile
+          push: true
+          tags: neeraj46665/regex-app:latest  # Replace with your Docker Hub username and desired image name
+
+      - name: Deploy to your EC2 instance
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}  # SSH private key from secrets
+          EC2_USER: ec2-user  # Change if your EC2 user is different
+          EC2_HOST: ec2-13-53-39-239.eu-north-1.compute.amazonaws.com  # Your EC2 instance address
+          IMAGE_NAME: neeraj46665/regex-app:latest  # Docker image name
+        run: |
+          echo "${SSH_PRIVATE_KEY}" > key.pem
+          chmod 600 key.pem
+          ssh -i key.pem $EC2_USER@$EC2_HOST << 'EOF'
+            docker pull $IMAGE_NAME
+            docker stop regex-app || true  # Stop the existing container if it exists
+            docker rm regex-app || true  # Remove the existing container if it exists
+            docker run -d --name regex-app -p 5000:5000 $IMAGE_NAME
+          EOF
+          rm key.pem  # Clean up the key file
